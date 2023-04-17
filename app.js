@@ -15,6 +15,7 @@ const pool = mysql.createPool({
   database: process.env.DB_DATABASE
 });
 
+
 app.use(async function(req, res, next) {
   try {
     req.db = await pool.getConnection();
@@ -93,21 +94,32 @@ app.delete('/car/:id', async function(req,res) {
   }
 });
 
-app.put('/car', async function(req,res) {
+app.put('/update/year', async function(req,res) {
   try {
-    const { column, rowId, value } = req.body;
+    const { rowId, value } = req.body;
     const query = await req.db.query(
-      `UPDATE car SET :column = :value WHERE id = :rowId`,
+      `UPDATE car SET year = :value WHERE id = :rowId`,
       {
-        column,
         rowId,
         value
       }
     );
-      //this works. I think the problem is it is sending as 'year' and not just year
+    
+    // const { column, rowId, value } = req.body;
+    // const query = await req.db.query(
+    //   `UPDATE car SET :column = :value WHERE id = :rowId`,
+    //   {
+    //     column,
+    //     rowId,
+    //     value
+    //   }
+    // );
+    // this^^^ doesn't work :/
+
     // const query = await req.db.query(
     //   `UPDATE car SET year = 2005 WHERE id = 1;`
     // );
+    //but this^^^ works. I think the problem is it is sending as 'year' and not just year
 
     res.json({ success: true, message: 'Table successfully updated', data: null });
   } catch (err) {
